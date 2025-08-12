@@ -1,28 +1,38 @@
+import json
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-from backend import router as backend_router
+from backend import router
 from auth import router as auth_router
+from config import ALLOWED_ORIGINS, BASE_URL
 
+# === Generate static/config.js dari config.py ===
+CONFIG_DICT = {
+    "BASE_URL": BASE_URL
+}
+config_js_content = f"window.APP_CONFIG = {json.dumps(CONFIG_DICT)};\n"
+
+with open("static/config.js", "w", encoding="utf-8") as f:
+    f.write(config_js_content)
+
+# === FastAPI app ===
 app = FastAPI(title="SaveLog Simple API")
 
-# Middleware CORS
+app.include_router(auth_router)
+app.include_router(router)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8077", "http://127.0.0.1:8077", "http://0.0.0.0:8077"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount folder static
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Register router
-app.include_router(auth_router)
-app.include_router(backend_router)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8077, reload=True)
+@app.get("/")
+async def root():
+    return FileResponse("static/index.html")

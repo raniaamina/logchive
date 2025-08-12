@@ -1,14 +1,15 @@
 import os
 from datetime import datetime, timedelta
 from typing import Optional, List
-from fastapi import HTTPException, Depends, APIRouter
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from database import get_db, Log, LOGS_DIR
+from database import get_db, Log
 from auth import get_current_user, oauth2_scheme
+from config import BASE_URL, LOGS_DIR
 
-BASE_URL = "http://localhost:8077"
+router = APIRouter()
 
 class LogCreate(BaseModel):
     filename: Optional[str]

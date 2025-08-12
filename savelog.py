@@ -5,7 +5,14 @@ import sys
 import getpass
 import re
 
-API_URL = "http://localhost:8077"
+# Import dari config.py
+try:
+    from config import BASE_URL
+except ImportError:
+    print("Gagal import config.py. Pastikan file config.py ada dan bisa diakses.")
+    sys.exit(1)
+
+API_URL = BASE_URL  # langsung ambil dari config
 
 def login():
     username = input("Username: ")
@@ -32,8 +39,6 @@ def parse_expire(expire_str):
     2d = 2 hari
     2M = 2 bulan (30 hari/bulan)
     2Y = 2 tahun (365 hari/tahun)
-
-    Return nilai dalam menit (int).
     """
     if not expire_str:
         return None
@@ -57,9 +62,6 @@ def parse_expire(expire_str):
         return value * 60 * 24 * 30
     elif unit == "Y":
         return value * 60 * 24 * 365
-    else:
-        # seharusnya tidak pernah ke sini karena regex sudah validasi
-        return None
 
 def save_log(token, content, filename=None, private=False, expire_minutes=None):
     headers = {}
@@ -73,7 +75,7 @@ def save_log(token, content, filename=None, private=False, expire_minutes=None):
     }
 
     if expire_minutes:
-        data["expire_minutes"] = expire_minutes  # backend pakai menit
+        data["expire_minutes"] = expire_minutes
 
     resp = requests.post(f"{API_URL}/logs", json=data, headers=headers)
     if resp.status_code == 200:

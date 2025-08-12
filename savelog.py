@@ -14,9 +14,11 @@ except ImportError:
 
 API_URL = BASE_URL  # langsung ambil dari config
 
-def login():
-    username = input("Username: ")
-    password = getpass.getpass("Password: ")
+def login(username=None, password=None):
+    if not username:
+        username = input("Username: ")
+    if not password:
+        password = getpass.getpass("Password: ")
 
     resp = requests.post(
         f"{API_URL}/login",
@@ -30,6 +32,7 @@ def login():
     else:
         print("Login gagal:", resp.text)
         return None
+
 
 def parse_expire(expire_str):
     """
@@ -90,12 +93,14 @@ def main():
     parser.add_argument("--private", action="store_true", help="Buat log privat (butuh login)")
     parser.add_argument("-xp", "--expire", type=str, help="Waktu kedaluwarsa log. Contoh: 10m, 2h, 1d, 3M, 1Y")
     parser.add_argument("--login", action="store_true", help="Login sebelum upload")
+    parser.add_argument("-u", "--username", help="Username untuk login")
+    parser.add_argument("-p", "--password", help="Password untuk login")
 
     args = parser.parse_args()
 
     token = None
     if args.login or args.private:
-        token = login()
+        token = login(args.username, args.password)
         if not token:
             sys.exit(1)
 

@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from database import get_db, Log
+from database import get_db, Log, User
 from auth import get_current_user, oauth2_scheme
 from config import BASE_URL, LOGS_DIR
 
@@ -51,13 +51,14 @@ async def get_log(filename: str, token: Optional[str] = Depends(oauth2_scheme), 
         raise HTTPException(status_code=404, detail="File not found")
 
     if log.private:
-        from auth import fake_tokens  # hindari circular import
+        from auth import fake_tokens
         if not token:
             raise HTTPException(status_code=401, detail="Authentication required")
         username = fake_tokens.get(token)
         if not username:
             raise HTTPException(status_code=401, detail="Invalid token")
-        user = db.query(Log.owner.__class__).filter_by(username=username).first()
+        # -> query User langsung
+        user = db.query(User).filter(User.username == username).first()
         if not user or user.id != log.owner_id:
             raise HTTPException(status_code=403, detail="Access denied")
 
@@ -76,7 +77,8 @@ def create_log(log: LogCreate, db=Depends(get_db), token: Optional[str] = Depend
         username = fake_tokens.get(token)
         if not username:
             raise HTTPException(status_code=401, detail="Invalid token")
-        user = db.query(Log.owner.__class__).filter_by(username=username).first()
+        # -> query User langsung
+        user = db.query(User).filter(User.username == username).first()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid token")
         owner_id = user.id

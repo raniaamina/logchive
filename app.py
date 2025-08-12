@@ -18,7 +18,7 @@ with open("static/config.js", "w", encoding="utf-8") as f:
     f.write(config_js_content)
 
 # === FastAPI app ===
-app = FastAPI(title="SaveLog Simple API")
+app = FastAPI(title="logchive Simple API")
 
 app.include_router(auth_router)
 app.include_router(router)

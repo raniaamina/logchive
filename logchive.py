@@ -87,7 +87,7 @@ def save_log(token, content, filename=None, private=False, expire_minutes=None):
         print("Gagal menyimpan:", resp.text)
 
 def main():
-    parser = argparse.ArgumentParser(description="SaveLog CLI")
+    parser = argparse.ArgumentParser(description="logchive CLI")
     parser.add_argument("-f", "--file", help="File yang akan diupload (jika tidak, baca dari stdin)")
     parser.add_argument("-n", "--filename", help="Nama file custom di server")
     parser.add_argument("--private", action="store_true", help="Buat log privat (butuh login)")

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+REAL_PATH="$(readlink -f "$0")"
+SCRIPT_DIR="$(dirname "$REAL_PATH")"
+PY_SCRIPT="$SCRIPT_DIR/logchive.py"
+
+
+python "$PY_SCRIPT" "$@"

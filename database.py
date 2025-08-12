@@ -9,7 +9,7 @@ LOGS_DIR = "logs"
 os.makedirs(LOGS_DIR, exist_ok=True)
 
 # Database config
-DATABASE_URL = "sqlite:///./savelog.db"
+DATABASE_URL = "sqlite:///./logchive.db"
 Base = declarative_base()
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine)

@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, Depends, Response, Request, APIRoute
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from pydantic import BaseModel
 from datetime import datetime, timedelta
@@ -15,7 +16,7 @@ import secrets
 
 LOGS_DIR = "logs"
 os.makedirs(LOGS_DIR, exist_ok=True)
-
+BASE_URL = "http://localhost:8077"
 
 # ----- Database -----
 DATABASE_URL = "sqlite:///./savelog.db"
@@ -106,6 +107,17 @@ def check_and_cleanup_missing_files_all(db: Session = Depends(get_db)):
 app = FastAPI(title="SaveLog Simple API")
 app.include_router(router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8077",
+        "http://127.0.0.1:8077",
+        "http://0.0.0.0:8077"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
@@ -200,8 +212,7 @@ def create_log(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {e}")
 
-    # URL publik (ganti domain sesuai kebutuhan)
-    base_url = "http://localhost:8000/logs"
+    base_url = {BASE_URL}
     file_url = f"{base_url}/{filename}"
 
     return {
@@ -209,8 +220,6 @@ def create_log(
         "file_url": file_url,
         "expire_at": expire_at.isoformat() if expire_at else "Tidak ada"
     }
-
-
 
 @app.get("/logs", response_model=List[LogOut])
 def get_logs(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -252,21 +261,13 @@ def auto_delete_expired(db: Session = Depends(get_db)):
 
 @app.delete("/cleanup")
 def cleanup_all_logs(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    """
-    Hapus semua log milik user (private dan publik yang dia punya),
-    sekaligus hapus file fisiknya.
-    """
-
-    # Cari semua log user
     logs = db.query(Log).filter(Log.owner_id == user.id).all()
 
-    # Hapus file fisik setiap log
     for log in logs:
         file_path = os.path.join(LOGS_DIR, log.filename)
         if os.path.exists(file_path):
             os.remove(file_path)
 
-    # Hapus record di DB
     deleted_count = db.query(Log).filter(Log.owner_id == user.id).delete()
     db.commit()
     return {"msg": f"{deleted_count} logs deleted"}

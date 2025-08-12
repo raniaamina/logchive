@@ -5,7 +5,7 @@ import sys
 import getpass
 import re
 
-API_URL = "http://localhost:8000"
+API_URL = "http://localhost:8077"
 
 def login():
     username = input("Username: ")

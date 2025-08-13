@@ -88,7 +88,7 @@ echo "Catatan sementara" | python logchive.py -xp 10m
 ```
 
 
-Agar logchive dapat digunakan dari direktori manapun, sebaiknay buat symlink berkas logchive di $HOME/.local/bin/logchive. Dengan demikian, Anda dapat menggunakan logchive secara langsung di terminal tanpa perlu `python /path/ke/logchive.py`
+Agar logchive dapat digunakan dari direktori manapun, sebaiknya buat symlink berkas logchive di $HOME/.local/bin/logchive. Dengan demikian, Anda dapat menggunakan logchive secara langsung di terminal tanpa perlu `python /path/ke/logchive.py`
 
 ---
 

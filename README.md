@@ -32,6 +32,7 @@ pip install -r requirements.txt
 
 ---
 
+
 ## Konfigurasi
 
 Bila diperlukan, edit file `config.py` untuk mengatur:
@@ -85,6 +86,9 @@ echo "Rahasia" | python logchive.py --private --login -u username -p p4ssw0rd
 ```bash
 echo "Catatan sementara" | python logchive.py -xp 10m
 ```
+
+
+Agar logchive dapat digunakan dari direktori manapun, sebaiknay buat symlink berkas logchive di $HOME/.local/bin/logchive. Dengan demikian, Anda dapat menggunakan logchive secara langsung di terminal tanpa perlu `python /path/ke/logchive.py`
 
 ---
 

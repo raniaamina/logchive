@@ -1,6 +1,6 @@
 # logchive Simple API
 
-logchive adalah aplikasi sederhana untuk menyimpan catatan/log, baik secara publik maupun privat, dengan dukungan kedaluwarsa otomatis dan antarmuka web sederhana.
+logchive, perkakas sederhana untuk menyimpan catatan/log, baik secara publik maupun privat, dengan dukungan kedaluwarsa otomatis dan antarmuka web sederhana untuk menilik kembali log yang telah disimpan sebelumnya.
 
 ## Fitur
 - Simpan log publik dan privat
@@ -10,9 +10,9 @@ logchive adalah aplikasi sederhana untuk menyimpan catatan/log, baik secara publ
 
 ---
 
-## Instalasi
+## Pemasangan
 
-### 1. Clone repository
+### 1. Klon Repo
 ```bash
 git clone https://github.com/username/logchive.git
 cd logchive
@@ -41,8 +41,6 @@ ALLOWED_ORIGINS = [
     "http://localhost:8077",
     "http://127.0.0.1:8077",
 ]
-LOGS_DIR = "logs"
-DATABASE_URL = "sqlite:///./logchive.db"
 ```
 ---
 
